@@ -19,15 +19,20 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessages> handleValidationError(MethodArgumentNotValidException exception) {
-        List<String> messages = exception.getBindingResult().getFieldErrors().stream().map(fieldError -> 
-            "[" + fieldError.getField() + "] must be " + fieldError.getDefaultMessage() + ". your input: [" + fieldError.getRejectedValue() + "]"
-        ).collect(Collectors.toList());
+        List<String> messages = exception.getBindingResult().getFieldErrors().stream()
+        .map(fieldError -> {
+            String field = fieldError.getField();
+            String defaultMessage = fieldError.getDefaultMessage();
+            Object rejectedValue = fieldError.getRejectedValue();
+            return "[" + field + "] must be " + defaultMessage + ". your input: [" + rejectedValue + "]";
+        })
+        .collect(Collectors.toList());
         return responseErrorMessages(messages, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorMessages> handleException(Exception exception) {
-        return responseErrorMessages(List.of("internal server error"), HttpStatus.UNPROCESSABLE_ENTITY);
+        return responseErrorMessages(List.of("internal server error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private ResponseEntity<ErrorMessages> responseErrorMessages(List<String> messages, HttpStatus status) {
