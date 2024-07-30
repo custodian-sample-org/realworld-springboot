@@ -177,10 +177,6 @@ public class ArticleServiceImpl implements ArticleService {
             articleEntities = articleRepository.findListByPaging(pageable);
         }
 
-        return convertToArticleList(articleEntities, authUserDetails);
-    }
-
-    private List<ArticleDto> convertToArticleList(List<ArticleEntity> articleEntities, AuthUserDetails authUserDetails) {
         return articleEntities.stream().map(entity -> {
             List<FavoriteEntity> favorites = entity.getFavoriteList();
             Boolean favorited = favorites.stream().anyMatch(favoriteEntity -> favoriteEntity.getUser().getId().equals(authUserDetails.getId()));
