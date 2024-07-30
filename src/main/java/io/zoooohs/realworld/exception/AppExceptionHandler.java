@@ -20,7 +20,9 @@ public class AppExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessages> handleValidationError(MethodArgumentNotValidException exception) {
         List<String> messages = exception.getBindingResult().getFieldErrors().stream().map(fieldError -> 
-            "[" + fieldError.getField() + "] must be " + fieldError.getDefaultMessage() + ". your input: [" + fieldError.getRejectedValue() + "]"
+            "[" + fieldError.getField() + "] must be " + 
+            fieldError.getDefaultMessage() + ". your input: [" + 
+            fieldError.getRejectedValue() + "]"
         ).collect(Collectors.toList());
         return responseErrorMessages(messages, HttpStatus.UNPROCESSABLE_ENTITY);
     }
